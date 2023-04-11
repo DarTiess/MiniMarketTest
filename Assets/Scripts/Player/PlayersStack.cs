@@ -1,38 +1,41 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using DefaultNamespace.Store;
 using Garden;
 using UnityEngine;
+using Vegetables;
 
-public class PlayersStack : MonoBehaviour
+public class PlayersStack : MonoBehaviour, IStack
 {
 
     public event Action IsFull;
+    public event Action IsFreeStack;
     public event Action CanStacking;
 
 
     [SerializeField] private Transform _stackPlace;
     [SerializeField]
-    private VegetableObject _vegetablePrefab;
+    private VegetableInPlayer _vegetablePrefab;
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _jumpDuration;
     [SerializeField] private float _objectHeight;
     [SerializeField] private int _limitOfStack;
 
     private int _vegIndex = 0;
-  
+
     private float _vegPosition;
-    
-    private List<VegetableObject>_objInStack = new List<VegetableObject>();
+
+    private List<VegetableInPlayer>_objInStack = new List<VegetableInPlayer>();
     private bool _onSaling;
     private bool _isFullingStack;
     private bool _stacking;
 
-    private PlayerAnimator _animator;
+    private CharacterAnimator _animator;
 
     private void Start()
     {
-        _animator = GetComponent<PlayerAnimator>();
+        _animator = GetComponent<CharacterAnimator>();
         _vegPosition = _stackPlace.position.y;
         CreateVegetablesStackInactive();
     }
@@ -42,10 +45,14 @@ public class PlayersStack : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Garden"))
         {
+            if (_isFullingStack)
+            {
+                return;
+            }
             if (!_stacking)
             {
                 _stacking = true;
-                other.GetComponent<GardenGrowing>().PullVegetable(this);
+                StartCoroutine(TryGetVegetable(other.GetComponent<GardenGrowing>()));
             }
         }
 
@@ -57,17 +64,38 @@ public class PlayersStack : MonoBehaviour
                OutOfStack(other.gameObject.GetComponent<Store>());
             }
         }
-       
     }
 
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Garden"))
+        {
+            if (_stacking)
+            {
+                StopAllCoroutines();
+                _stacking = false;
+            }
+           
+        }
+    }
 
-    public void StackVegetable()
+    private IEnumerator TryGetVegetable(GardenGrowing garden)
+    {
+        bool isPulling= garden.PullVegetable(this);
+        while (!isPulling)
+        {
+            isPulling = garden.PullVegetable(this);
+            yield return null;
+        }
+    }
+    public void StackIn()
     {
         if (!_isFullingStack)
         {
             _animator.HasStack();
             _objInStack[_vegIndex].gameObject.SetActive(true);
             _vegIndex++;
+           
             if (_vegIndex >= _objInStack.Count)
             {
                 _isFullingStack = true;
@@ -77,24 +105,59 @@ public class PlayersStack : MonoBehaviour
             {
                 _stacking = false;
             }
+            ReplaceStackPositions();
+        }
+    }
+
+    public void StackOut()
+    {
+       _objInStack[_vegIndex-1].gameObject.SetActive(false);
+       
+        _vegIndex--;
+      
+        _isFullingStack = false;
+        _onSaling = false;
+        _stacking = false;
+        if (_vegIndex <= 0)
+        {
+            _animator.StackEmpty();
+            ReplaceStackPositions();
+          
+        } 
+        IsFreeStack?.Invoke();
+    }
+
+    private void ReplaceStackPositions()
+    {
+        _vegPosition = _stackPlace.position.y;
+        foreach (VegetableInPlayer vegetableObject in _objInStack)
+        {
+            vegetableObject.transform.position=
+                new Vector3(_stackPlace.position.x, _vegPosition, _stackPlace.position.z);
+           
+            _vegPosition += +_objectHeight;
         }
     }
 
     private void OutOfStack(Store target)
     {
-        if (_vegIndex >0)
+        if (target.IsFull)
         {
-            
-            _objInStack[_vegIndex].PushingFromPlayer(target, this);
+            return;
         }
+        _objInStack[_vegIndex-1].PushingFromPlayer(target, this);
     }
 
     private void CreateVegetablesStackInactive()
     {
         for (int i = 0; i < _limitOfStack; i++)
         {
-            var pref = Instantiate(_vegetablePrefab, _stackPlace.position, _stackPlace.rotation);
-            pref.transform.position = new Vector3(_stackPlace.position.x, _vegPosition, _stackPlace.position.z);
+            VegetableInPlayer pref = Instantiate(_vegetablePrefab, _stackPlace.position, _stackPlace.rotation);
+            pref.InitVegetable(_jumpDuration, _jumpForce);
+         
+            pref.transform.position =
+                new Vector3(_stackPlace.position.x, _vegPosition, _stackPlace.position.z);
+           
             _vegPosition += +_objectHeight;
             pref.transform.parent = _stackPlace;
             pref.gameObject.tag = "Untagged";
@@ -102,15 +165,5 @@ public class PlayersStack : MonoBehaviour
             _objInStack.Add(pref);
             
         }
-    }
-
-
-    public void StackOut()
-    {
-        _objInStack[_vegIndex].gameObject.SetActive(false);
-        _vegIndex --;
-
-        _isFullingStack = false;
-        _onSaling = false;
     }
 }

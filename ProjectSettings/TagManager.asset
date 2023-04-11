@@ -4,15 +4,11 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Melee
-  - GrassPlace
-  - Grass
-  - Block
-  - StoreHouse
   - Missile
   - Garden
   - Vegetable
   - Store
+  - Cash
   layers:
   - Default
   - TransparentFX

@@ -2,7 +2,7 @@
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-[RequireComponent(typeof(PlayerAnimator))]
+[RequireComponent(typeof(CharacterAnimator))]
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Settings")]
@@ -12,19 +12,18 @@ public class PlayerMovement : MonoBehaviour
     private const string HORIZONTAL_AXIS = "Horizontal";
     private const string VERTICAL_AXIS = "Vertical";
     private NavMeshAgent _nav;
-    private PlayerAnimator _animator;
+    private CharacterAnimator _animator;
     private Vector3 _temp;
-    private bool _isDead;
+   
 
     private void Start()
     {
-        _animator = GetComponent<PlayerAnimator>();
+        _animator = GetComponent<CharacterAnimator>();
         _nav = GetComponent<NavMeshAgent>();
     }
 
     private void FixedUpdate()
     {
-        if (_isDead) return;
         Move();
     }
 

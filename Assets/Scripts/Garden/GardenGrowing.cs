@@ -2,17 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Vegetables;
 using Random = UnityEngine.Random;
 
 namespace Garden
 {
-    public class GardenGrowing: MonoBehaviour
+    public class GardenGrowing: MonoBehaviour, IStack
     {
         [SerializeField]
         private VegetableType vegetableType;
             
         [SerializeField]
-        private List<VegetableObject> vegetables;
+        private List<VegetableInGarden> vegetables;
         [Header("Vegetables Settings")]
         [SerializeField]
         private float _growingSpeed;
@@ -23,7 +24,7 @@ namespace Garden
 
         public VegetableType VegetableType => vegetableType;
 
-        private List<VegetableObject> readyVegetables = new List<VegetableObject>();
+        private List<VegetableInGarden> readyVegetables = new List<VegetableInGarden>();
         
         private void Start()
         {
@@ -32,7 +33,7 @@ namespace Garden
 
         private void GrowingVegetables()
         {
-            foreach (VegetableObject vegetable in vegetables)
+            foreach (VegetableInGarden vegetable in vegetables)
             {
                 float rndTimer = Random.Range(0, _maxTimerToGrow);
                 vegetable.InitVegetable(_growingSpeed, _readyHeight, rndTimer, this);
@@ -40,21 +41,32 @@ namespace Garden
             }
         }
 
-        public void PullVegetable(PlayersStack target)
+        public bool PullVegetable(PlayersStack target)
         {
             if (readyVegetables.Count <= 0)
             {
-                return;
+                return false;
             }
             int lastVeg = readyVegetables.Count - 1;
             readyVegetables[lastVeg].PushingToPlayer(target);
             readyVegetables.RemoveAt(lastVeg);
+            return true;
         }
 
 
-        public void VagetableIsReady(VegetableObject vegetableObject)
+        public void VagetableIsReady(VegetableInGarden vegetableInGarden)
         {
-            readyVegetables.Add(vegetableObject);
+            readyVegetables.Add(vegetableInGarden);
+        }
+
+        public void StackIn()
+        {
+            
+        }
+
+        public void StackOut()
+        {
+           
         }
     }
 }

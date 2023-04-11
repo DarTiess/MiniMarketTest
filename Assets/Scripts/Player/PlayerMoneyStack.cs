@@ -1,18 +1,20 @@
+using System;
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using DefaultNamespace.Cash;
 using UnityEngine;
 using Zenject;
 
 public class PlayerMoneyStack : MonoBehaviour
 {
-    [SerializeField] private GameObject _coinPrefab;
-    [Header("Magnet")]
-    [SerializeField] private float _speed;
-    [SerializeField] private float timeToScale;
+   // [SerializeField] private GameObject _coinPrefab;
+  //  [Header("Magnet")]
+   // [SerializeField] private float _speed;
+  //  [SerializeField] private float timeToScale;
 
-    private List<GameObject> _coinsList = new List<GameObject>();
-    private Vector3 sizeScale;
+//    private List<GameObject> _coinsList = new List<GameObject>();
+ //   private Vector3 sizeScale;
     private Economics _economics;
 
     [Inject]
@@ -22,9 +24,22 @@ public class PlayerMoneyStack : MonoBehaviour
     }
     private void Start()
     {
-        sizeScale = _coinPrefab.transform.localScale;
+       // sizeScale = _coinPrefab.transform.localScale;
     }
-    public void CreateCoinsPull(int coinsLimit)
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Cash"))
+        {
+            CashTable cashTable = other.GetComponent<CashTable>();
+            if (cashTable.ClientCount > 0)
+            {
+                cashTable.CreateBox();
+            }
+        }
+    }
+
+  /*  public void CreateCoinsPull(int coinsLimit)
     {
         for (int i = 0; i < coinsLimit; i++)
         {
@@ -63,5 +78,5 @@ public class PlayerMoneyStack : MonoBehaviour
             yield return new WaitForSecondsRealtime(0.01f);
         }
         obj.gameObject.SetActive(false);
-    }
+    }*/
 }
