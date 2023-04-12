@@ -36,6 +36,11 @@ public class PlayerMoneyStack : MonoBehaviour
             {
                 cashTable.CreateBox();
             }
+
+            if (cashTable.MoneyCount > 0)
+            {
+                cashTable.PayMoney(this);
+            }
         }
     }
 
@@ -79,4 +84,8 @@ public class PlayerMoneyStack : MonoBehaviour
         }
         obj.gameObject.SetActive(false);
     }*/
+  public void StackIn()
+  {
+      _economics.GetMoney();
+  }
 }

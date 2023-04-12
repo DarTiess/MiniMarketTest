@@ -27,6 +27,7 @@ namespace DefaultNamespace.Clients
             _clientStack.IsFull += SwitchBuillboard;
             _clientStack.GetVegetable += UpdateCountVegetable;
             _clientStack.IsEmpty += DesActivateBillboard;
+            _clientStack.OnRestart += OnStart;
             OnStart();
         }
 
@@ -43,11 +44,14 @@ namespace DefaultNamespace.Clients
             _clientStack.IsFull -= SwitchBuillboard;
             _clientStack.GetVegetable -= UpdateCountVegetable;
             _clientStack.IsEmpty -= DesActivateBillboard;
+            _clientStack.OnRestart -= OnStart;
         }
 
         private void OnStart()
         {
+            builboard.gameObject.SetActive(true);
             SetVegetableCountText();
+            _imageWishes.gameObject.SetActive(true);
             _imageCash.gameObject.SetActive(false);
         }
 

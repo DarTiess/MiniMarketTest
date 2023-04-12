@@ -13,21 +13,9 @@ namespace DefaultNamespace.Store
         [SerializeField]
         private float _jumpForce;
         [SerializeField] private List<VegetableInStore> _vegetables;
-        private int _vegInStore=0;
-        public bool IsFull
-        {
-            get
-            {
-                if (_vegInStore >= _vegetables.Count)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
+        public int _vegInStore=0;
+        public bool IsFull => _vegInStore >= _vegetables.Count;
+        public bool NotEmpty => _vegInStore > 0;
 
         private void Start()
         {
@@ -40,9 +28,7 @@ namespace DefaultNamespace.Store
             { 
                 _vegetables[_vegInStore].gameObject.SetActive(true);
                 _vegInStore++;
-              
             }
-           
         }
 
         public void StackOut()
@@ -54,23 +40,18 @@ namespace DefaultNamespace.Store
           
         }
 
-        public bool PullVegetableToClient(ClientStack client)
+        public void PullVegetableToClient(ClientStack client)
         {
-            if (_vegInStore <= 0)
-            {
-                return false;
-            }
-            int lastVeg = _vegetables.Count - 1;
-           _vegetables[lastVeg].PushingToClient(client, this);
-           return true;
+            _vegetables[_vegInStore-1].PushingToClient(client, this);
         }
 
         private void CleanStorePlace()
         {
             foreach (VegetableInStore vegetable in _vegetables)
             {
-                vegetable.gameObject.SetActive(false);
                 vegetable.InitVegetable(_jumpDuration, _jumpForce);
+                vegetable.gameObject.SetActive(false);
+                
             }
         }
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DefaultNamespace.Cash;
 using Garden;
 using UnityEngine;
@@ -10,20 +11,21 @@ namespace DefaultNamespace.Clients
 {
     [RequireComponent(typeof(ClientMove))]
     [RequireComponent(typeof(CharacterAnimator))]
+    [RequireComponent(typeof(ClientMoneyStack))]
     public class ClientStack: MonoBehaviour, IStack
     {
         public event Action IsFull;
         public event Action GetVegetable;
         public event Action IsEmpty;
+        public event Action OnRestart;
         
-        [SerializeField]
-        private VegetableType _wishVegetableType;
-        [SerializeField]
-        private List<VegetableInClient> _vegetableList;
+        [SerializeField] private VegetableType _wishVegetableType;
+        [SerializeField] private List<Transform> _vegetablesPlaces;
+        [SerializeField] private VegetableInClient _vegetablePrefab;
         [SerializeField] private float _jumpDuration;
         [SerializeField] private float _jumpForce;
-
-        public int WisheVegetables => _vegetableList.Count;
+        [SerializeField] private GameObject _boxInHand;
+        public int WisheVegetables =>  _vegetablesPlaces.Count;
         
         private ClientMove _clientMove;
         private int _vegIndex=0;
@@ -31,12 +33,17 @@ namespace DefaultNamespace.Clients
         private bool _full;
         private CharacterAnimator _animator;
         private bool _onCash;
+        private ClientMoneyStack _clientMoney;
+
+        private List<VegetableInClient> _vegetableList = new List<VegetableInClient>();
 
         private void Start()
         {
             _animator = GetComponent<CharacterAnimator>();
             _clientMove = GetComponent<ClientMove>();
-            HideStackList();
+            _clientMoney = GetComponent<ClientMoneyStack>();
+            CreateStackList();
+           HideBoxInHand();
         }
 
 
@@ -48,29 +55,22 @@ namespace DefaultNamespace.Clients
                 {
                     if (!_stacking)
                     {
-                        Debug.Log("InStore");
                         _stacking = true;
                        StartCoroutine(TryGetVegetable(other.GetComponent<Store.Store>()));
                     }
                 }
             }
-
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            
             if (other.CompareTag("Cash"))
             {
                 if (_onCash)
                 {
                     return;
                 }
-                Debug.Log("InCash");
                 _onCash = true;
                 StayOnCash(other.GetComponent<CashTable>());
             }
         }
+
 
         public void StackIn()
         {
@@ -93,37 +93,87 @@ namespace DefaultNamespace.Clients
 
         public void StackOut()
         {
+            
             _animator.StackEmpty();
-            for(int i=_vegetableList.Count-1;i>=0;i--)
-            {
-                _vegetableList[i].gameObject.SetActive(false);
-            }
+           
+                _vegetableList[_vegIndex-1].gameObject.SetActive(false);
+                _vegIndex--;
             _clientMove.GetNextTarget();
             IsEmpty?.Invoke();
         }
 
-        private void HideStackList()
+        public void DisableStack(CashTable target)
         {
-            foreach (VegetableInClient vegetable in _vegetableList)
+            for(int i=_vegetableList.Count-1;i>=0;i--)
             {
-                vegetable.gameObject.SetActive(false);
-                vegetable.InitVegetable(_jumpDuration, _jumpForce);
+                _vegetableList[i].PushingToCashBox(target, this);
+                _clientMoney.PayMoney(target);
+
             }
+        }
+
+        public void HadBox()
+        {
+            _boxInHand.SetActive(true);
+            _animator.HasStack();
+        }
+
+        private void CreateStackList()
+        {
+            for (int i = 0; i <  _vegetablesPlaces.Count; i++)
+            {
+                VegetableInClient pref = Instantiate(_vegetablePrefab, _vegetablesPlaces[i].position, _vegetablesPlaces[i].rotation);
+                pref.InitVegetable(_jumpDuration, _jumpForce);
+                
+                pref.transform.parent = gameObject.transform;
+               
+                pref.gameObject.SetActive(false);
+               _vegetableList.Add(pref);
+            
+            }
+        }
+
+        private void ReplaceStackList()
+        {
+            for (int i = 0; i < _vegetableList.Count; i++)
+            {
+                _vegetableList[i].transform.position = _vegetablesPlaces[i].transform.position;
+            }
+        }
+
+        private void HideBoxInHand()
+        {
+            _boxInHand.SetActive(false);
         }
 
         private IEnumerator TryGetVegetable(Store.Store store)
         {
-            bool isPulling = store.PullVegetableToClient(this);
-            while (!isPulling)
+            _clientMove.StopMove();
+            while (!store.NotEmpty)
             {
-                isPulling = store.PullVegetableToClient(this);
                 yield return null;
             }
+            store.PullVegetableToClient(this);
         }
 
         private void StayOnCash(CashTable cashTable)
         {
             cashTable.StayOnQueue(this);
+            _clientMove.StopMove();
         }
+
+        public void ClearProgress()
+        {
+            _full = false;
+            _stacking = false;
+            _onCash = false;
+           
+            HideBoxInHand();
+           ReplaceStackList();
+            OnRestart?.Invoke();
+        }
+
+        
+        
     }
 }

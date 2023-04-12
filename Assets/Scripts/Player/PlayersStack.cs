@@ -15,8 +15,7 @@ public class PlayersStack : MonoBehaviour, IStack
 
 
     [SerializeField] private Transform _stackPlace;
-    [SerializeField]
-    private VegetableInPlayer _vegetablePrefab;
+    [SerializeField] private VegetableInPlayer _vegetablePrefab;
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _jumpDuration;
     [SerializeField] private float _objectHeight;
@@ -143,6 +142,7 @@ public class PlayersStack : MonoBehaviour, IStack
     {
         if (target.IsFull)
         {
+            _onSaling = false;
             return;
         }
         _objInStack[_vegIndex-1].PushingFromPlayer(target, this);

@@ -9,28 +9,53 @@ namespace DefaultNamespace.Clients
     [RequireComponent(typeof(CharacterAnimator))]
     public class ClientMove: MonoBehaviour
     {
-        [SerializeField]
+        
         private float _speed;
-
-        [SerializeField]
-        private List<Transform> _places;
+        private List<Transform> _places=new List<Transform>();
 
         private int _indexPlace=0;
         private NavMeshAgent _navMesh;
        private Transform _target;
        private CharacterAnimator _animator;
-
+       private ClientsGenerator _parent;
+       private ClientStack _clientStack;
+      
        private void Start()
-        {
-            _navMesh = GetComponent<NavMeshAgent>();
-            _animator = GetComponent<CharacterAnimator>();
-            _navMesh.speed = _speed;
-            SetTarget(_places[_indexPlace]);
+       {
+           Debug.Log("Starting");
+           OnStart();
+           //  SetTarget(_places[_indexPlace]);
+       }
+
+       private void Update()
+       {
+           if (_indexPlace >= _places.Count)
+           {
+               if (Vector3.Distance(transform.position, _target.position) <= 1f)
+               {
+                   _parent.ClientIsGone(this);
+                   _clientStack.ClearProgress();
+               }
+           }     
         }
 
        private void LateUpdate()
        {
            _animator.MoveAnimation(_navMesh.velocity.magnitude / _navMesh.speed);
+       }
+
+       public void Initialize(float speed, List<Transform> places, ClientsGenerator clientsGenerator)
+       {
+           _speed = speed;
+           _parent = clientsGenerator;
+           InitialPath(places);
+       }
+
+       public void BeginPath()
+       {
+           OnStart();
+           _indexPlace = 0;
+           GetNextTarget();
        }
 
        public void StopMove()
@@ -44,11 +69,29 @@ namespace DefaultNamespace.Clients
            SetTarget(_places[_indexPlace]);
        }
 
+       private void InitialPath(List<Transform> places)
+       {
+           foreach (Transform place in places)
+           {
+               _places.Add(place);
+           }
+       }
+
+       private void OnStart()
+       {
+           _navMesh = GetComponent<NavMeshAgent>();
+           _animator = GetComponent<CharacterAnimator>();
+           _clientStack = GetComponent<ClientStack>();
+           _navMesh.speed = _speed;
+       }
+
        private void SetTarget(Transform newTarget)
        {
            _target = newTarget;
            _navMesh.destination = _target.position;
            _indexPlace++;
+           
+           
        }
     }
 }
