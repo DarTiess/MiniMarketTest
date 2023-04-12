@@ -60,6 +60,7 @@ namespace DefaultNamespace.Clients
                 float rndSpeed = Random.Range(_minMoveSpeed, _maxMoveSpeed);
 
                 ClientMove client = Instantiate(_clientsListPrefabs[rndClient], transform.position, transform.rotation);
+                client.transform.parent = gameObject.transform;
                 client.Initialize(rndSpeed, path, this);
                 client.gameObject.SetActive(false);
                 _clientsList.Add(client);

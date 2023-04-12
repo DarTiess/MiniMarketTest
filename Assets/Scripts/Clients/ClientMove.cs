@@ -22,9 +22,7 @@ namespace DefaultNamespace.Clients
       
        private void Start()
        {
-           Debug.Log("Starting");
            OnStart();
-           //  SetTarget(_places[_indexPlace]);
        }
 
        private void Update()

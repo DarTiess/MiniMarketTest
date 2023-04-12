@@ -1319,7 +1319,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _moneyPrefab: {fileID: 6418860077769622071, guid: 11026f06a2b6b8b439b58328420dd9ec,
     type: 3}
-  _moneyCount: 5
+  _moneyCount: 1
   _jumDuration: 1
   _jumpForce: 4
 --- !u!1 &8884576384711530660

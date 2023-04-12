@@ -1,30 +1,35 @@
 using System;
-using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using DefaultNamespace.BuyPlace;
 using DefaultNamespace.Cash;
+using ModestTree;
 using UnityEngine;
 using Zenject;
 
 public class PlayerMoneyStack : MonoBehaviour
 {
-   // [SerializeField] private GameObject _coinPrefab;
-  //  [Header("Magnet")]
-   // [SerializeField] private float _speed;
-  //  [SerializeField] private float timeToScale;
-
-//    private List<GameObject> _coinsList = new List<GameObject>();
- //   private Vector3 sizeScale;
+    [SerializeField] private MoneyInPlayer _moneyPrefab;
+    [SerializeField] private int _moneyCount;
+    [SerializeField] private float _jumpDuration;
+    [SerializeField] private float _jumpForce;
     private Economics _economics;
+    private bool _onBuy;
+    private List<MoneyInPlayer> _moneyList = new List<MoneyInPlayer>();
+    private int _indexMoney = 0;
+    private int _paidMoney;
+    private bool _takeMoney;
+    private bool _boxing;
 
     [Inject]
     private void Construct(Economics economics)
     {
         _economics = economics;
     }
+
     private void Start()
     {
-       // sizeScale = _coinPrefab.transform.localScale;
+        CreateStack();
     }
 
     private void OnTriggerStay(Collider other)
@@ -34,58 +39,83 @@ public class PlayerMoneyStack : MonoBehaviour
             CashTable cashTable = other.GetComponent<CashTable>();
             if (cashTable.ClientCount > 0)
             {
-                cashTable.CreateBox();
+                if (!_boxing)
+                {
+                    cashTable.CreateBox(this);
+                    _boxing = true;
+                }
+              
             }
 
             if (cashTable.MoneyCount > 0)
             {
-                cashTable.PayMoney(this);
+                if (!_takeMoney)
+                {
+                    cashTable.PayMoney(this);
+                    _takeMoney = true;
+                }
+               
+              
+               
             }
         }
-    }
 
-  /*  public void CreateCoinsPull(int coinsLimit)
-    {
-        for (int i = 0; i < coinsLimit; i++)
+        if (other.CompareTag("BuyPlace"))
         {
-            GameObject coin = Instantiate(_coinPrefab, transform.position, transform.rotation);
-            coin.gameObject.SetActive(false);
-            _coinsList.Add(coin);
-        }
-    }
-
-    public void PushCoinsToBank(Transform originPosition)
-    {
-        foreach (GameObject coin in _coinsList)
-        {
-            if (!coin.activeInHierarchy)
+            if (!_onBuy)
             {
-                coin.transform.position = originPosition.position;
-                coin.transform.localScale = sizeScale;
-                coin.SetActive(true);
-
-                StartCoroutine(MagnetMoneyToCanvas(coin));
-                break;
+                BuyPlace buyPlace = other.GetComponent<BuyPlace>();
+                if (_economics.Money >= buyPlace.Price)
+                {
+                    _onBuy = true;
+                    _economics.BuyNewPlace(buyPlace.Price);
+                    OutStack(buyPlace);
+                }
             }
+            
         }
     }
 
-    private IEnumerator MagnetMoneyToCanvas(GameObject obj)
-    {
-        Transform dest = _economics.MoneyText.gameObject.transform;
-        if (dest == null) yield break;
 
-        obj.transform.DOScale(0, timeToScale);
-        _economics.BuyCoins(1);
-        while (Vector3.Distance(obj.transform.position, dest.position) > 0.1f)
-        {
-            obj.transform.position = Vector3.MoveTowards(obj.transform.position, dest.position, _speed);
-            yield return new WaitForSecondsRealtime(0.01f);
-        }
-        obj.gameObject.SetActive(false);
-    }*/
-  public void StackIn()
+    public void StackIn()
   {
       _economics.GetMoney();
+      _takeMoney = false;
+      _boxing = false;
   }
+
+    public void StackOut(MoneyInPlayer money)
+    {
+       money.gameObject.SetActive(false);
+       
+       _onBuy = false;
+       
+      
+    }
+
+    private void CreateStack()
+    {
+        for (int i = 0; i < _moneyCount; i++)
+        {
+            MoneyInPlayer money = Instantiate(_moneyPrefab, transform);
+            money.gameObject.SetActive(false);
+            money.InitMoney(_jumpDuration, _jumpForce);
+            _moneyList.Add(money);
+        }
+    }
+
+    private void OutStack(BuyPlace target)
+    {
+        
+            foreach (MoneyInPlayer moneyInPlayer in _moneyList)
+            {
+                if (!moneyInPlayer.gameObject.activeInHierarchy)
+                {
+                    moneyInPlayer.gameObject.SetActive(true);
+                    moneyInPlayer.PushingToBuyPlace(target, this);
+                    return;
+                }
+            }
+        
+    }
 }

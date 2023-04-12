@@ -9,6 +9,8 @@ TagManager:
   - Vegetable
   - Store
   - Cash
+  - Money
+  - BuyPlace
   layers:
   - Default
   - TransparentFX

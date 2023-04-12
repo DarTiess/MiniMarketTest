@@ -39,13 +39,7 @@ namespace DefaultNamespace.Clients
             }
         }
 
-        private void OnDestroy()
-        {
-            _clientStack.IsFull -= SwitchBuillboard;
-            _clientStack.GetVegetable -= UpdateCountVegetable;
-            _clientStack.IsEmpty -= DesActivateBillboard;
-            _clientStack.OnRestart -= OnStart;
-        }
+     
 
         private void OnStart()
         {

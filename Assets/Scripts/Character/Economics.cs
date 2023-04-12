@@ -29,19 +29,23 @@ public class Economics : MonoBehaviour
     public void GetMoney()
     {
         int result = Money + 1;
-        _money.DOCounter(Money,result, _speedDuration)
+        UpdateMoney(result);
+    }
+
+    public void BuyNewPlace(int price)
+    {
+        int result = Money - price;
+        UpdateMoney(result);
+    }
+
+    private void UpdateMoney(int result)
+    {
+        _money.DOCounter(Money, result, _speedDuration)
               .OnPlay(() =>
               {
                   _money.transform.DOScale(1.5f, _speedDuration)
-                        .OnComplete(() =>
-                        {
-                            _money.transform.DOScale(1, _speedDuration);
-                        });
+                        .OnComplete(() => { _money.transform.DOScale(1, _speedDuration); });
               })
-              .OnComplete(() =>
-              {
-                  Money = result;
-              });
-
+              .OnComplete(() => { Money = result; });
     }
 }

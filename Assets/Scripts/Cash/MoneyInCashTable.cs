@@ -20,10 +20,13 @@ namespace DefaultNamespace.Cash
         public void PushingToPlayer(PlayerMoneyStack target, CashTable cashTable)
         {
             transform.DOJump(target.transform.position, _jumpForce, 1, _speed)
+                     .OnStart(() =>
+                     {
+                         target.StackIn();
+                     })
                      .OnComplete(() =>
                      {
-                        target.StackIn();
-                        cashTable.StackOutMoney();
+                         cashTable.StackOutMoney();
                         SetToStartPosition();
                      });
         }
