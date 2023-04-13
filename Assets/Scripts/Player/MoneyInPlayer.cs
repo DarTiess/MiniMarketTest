@@ -1,21 +1,9 @@
 using DefaultNamespace.BuyPlace;
-using DefaultNamespace.Cash;
 using DG.Tweening;
-using UnityEngine;
+using Vegetables;
 
-public class MoneyInPlayer : MonoBehaviour
+public class MoneyInPlayer : VegetableBase
 {
-    private float _speed;
-    private float _jumpForce;
-  
-
-    public void InitMoney(float speed, float jumpForce)
-    {
-        _speed = speed;
-        _jumpForce = jumpForce;
-       
-    }
-
     public void PushingToBuyPlace(BuyPlace target, PlayerMoneyStack player)
     {
         transform.DOJump(target.transform.position, _jumpForce, 1, _speed)

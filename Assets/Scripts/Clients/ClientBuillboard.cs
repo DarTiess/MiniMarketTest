@@ -7,14 +7,11 @@ namespace DefaultNamespace.Clients
     [RequireComponent(typeof(ClientStack))]
     public class ClientBuillboard: MonoBehaviour
     {
-        [SerializeField]
-        private Canvas builboard;
-        [SerializeField]
-        public Image _imageWishes;
-        [SerializeField]
-        private Image _imageCash;
-        [SerializeField]
-        private TextMeshProUGUI _vegetableCountText;
+        [SerializeField] private Canvas builboard;
+        [SerializeField] public Image _imageWishes;
+        [SerializeField] private Image _imageCash;
+        [SerializeField] private TextMeshProUGUI _vegetableCountText;
+      
         private Camera _camera;
 
         private ClientStack _clientStack;

@@ -47,13 +47,24 @@ namespace UI
             _levelManager.OnLateLost -= OnLevelLost;
         }
 
-        void SwitchOnAllCanvasObjects()
+        public void LevelStart()
+        {
+            _levelManager.LevelStart();
+        }
+
+        public void LoadNextLevel()
+        {
+            _levelManager.LoadNextLevel();
+        }
+
+        private void SwitchOnAllCanvasObjects()
         {
             foreach (CanvasGroup cG in _canvasGroupes)
             {
                 cG.gameObject.SetActive(true);
             }
         }
+
         private void OnLevelStart()
         {
             _levelManager.LevelPlay();
@@ -73,16 +84,7 @@ namespace UI
             ActivateUIScreen(_panelLost);
         }
 
-        public void LoadNextLevel()
-        {
-            _levelManager.LoadNextLevel();
-        }
-        public void LevelStart()
-        {
-            _levelManager.LevelStart();
-        }
-
-        void ActivateUIScreen(CanvasGroup uiScreen)
+       private void ActivateUIScreen(CanvasGroup uiScreen)
         {
             foreach (CanvasGroup cGr in _canvasGroupes)
             {

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -46,11 +45,12 @@ namespace DefaultNamespace.Clients
        {
            _speed = speed;
            _parent = clientsGenerator;
-           InitialPath(places);
+          // InitialPath(places);
        }
 
-       public void BeginPath()
+       public void BeginPath(List<Transform> places)
        {
+           InitialPath(places);
            OnStart();
            _indexPlace = 0;
            GetNextTarget();
@@ -69,6 +69,7 @@ namespace DefaultNamespace.Clients
 
        private void InitialPath(List<Transform> places)
        {
+           _places.Clear();
            foreach (Transform place in places)
            {
                _places.Add(place);

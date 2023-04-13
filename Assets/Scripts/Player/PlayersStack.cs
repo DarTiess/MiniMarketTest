@@ -78,15 +78,6 @@ public class PlayersStack : MonoBehaviour, IStack
         }
     }
 
-    private IEnumerator TryGetVegetable(GardenGrowing garden)
-    {
-        bool isPulling= garden.PullVegetable(this);
-        while (!isPulling)
-        {
-            isPulling = garden.PullVegetable(this);
-            yield return null;
-        }
-    }
     public void StackIn()
     {
         if (!_isFullingStack)
@@ -126,6 +117,16 @@ public class PlayersStack : MonoBehaviour, IStack
         IsFreeStack?.Invoke();
     }
 
+    private IEnumerator TryGetVegetable(GardenGrowing garden)
+    {
+        bool isPulling= garden.PullVegetable(this);
+        while (!isPulling)
+        {
+            isPulling = garden.PullVegetable(this);
+            yield return null;
+        }
+    }
+
     private void ReplaceStackPositions()
     {
         _vegPosition = _stackPlace.position.y;
@@ -153,7 +154,7 @@ public class PlayersStack : MonoBehaviour, IStack
         for (int i = 0; i < _limitOfStack; i++)
         {
             VegetableInPlayer pref = Instantiate(_vegetablePrefab, _stackPlace.position, _stackPlace.rotation);
-            pref.InitVegetable(_jumpDuration, _jumpForce);
+            pref.Init(_jumpDuration, _jumpForce);
          
             pref.transform.position =
                 new Vector3(_stackPlace.position.x, _vegPosition, _stackPlace.position.z);

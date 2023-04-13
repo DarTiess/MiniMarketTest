@@ -1,26 +1,19 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Vegetables;
 using Random = UnityEngine.Random;
 
 namespace Garden
 {
-    public class GardenGrowing: MonoBehaviour, IStack
+    public class GardenGrowing: MonoBehaviour
     {
-        [SerializeField]
-        private VegetableType vegetableType;
+        [SerializeField] private VegetableType vegetableType;
             
-        [SerializeField]
-        private List<VegetableInGarden> vegetables;
+        [SerializeField] private List<VegetableInGarden> vegetables;
         [Header("Vegetables Settings")]
-        [SerializeField]
-        private float _growingSpeed;
-        [SerializeField]
-        private float _readyHeight;
-        [SerializeField]
-        private float _maxTimerToGrow;
+        [SerializeField] private float _growingSpeed;
+        [SerializeField] private float _readyHeight;
+        [SerializeField] private float _maxTimerToGrow;
 
         public VegetableType VegetableType => vegetableType;
 
@@ -59,14 +52,6 @@ namespace Garden
             readyVegetables.Add(vegetableInGarden);
         }
 
-        public void StackIn()
-        {
-            
-        }
-
-        public void StackOut()
-        {
-           
-        }
+      
     }
 }

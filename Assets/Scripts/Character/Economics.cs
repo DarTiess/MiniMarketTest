@@ -8,11 +8,6 @@ public class Economics : MonoBehaviour
     [SerializeField] private Text _money;
     [SerializeField] private float _speedDuration;
 
-  
-    public Text MoneyText
-    {
-        get { return _money; }
-    }
     public int Money
     {
         get { return PlayerPrefs.GetInt("Money"); ; }
@@ -23,8 +18,6 @@ public class Economics : MonoBehaviour
     {
         _money.text = Money.ToString();
     }
-
-  
 
     public void GetMoney()
     {

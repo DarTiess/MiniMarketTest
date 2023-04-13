@@ -1,27 +1,18 @@
 using DefaultNamespace.Clients;
 using DG.Tweening;
-using UnityEngine;
+using Vegetables;
 
 namespace DefaultNamespace.Cash
 {
-    public class BoxInCashTable : MonoBehaviour
+    public class BoxInCashTable : VegetableBase
     {
-        private float _speed;
-        private float _jumpForce;
-
-        public void InitMoney(float speed, float jumpForce)
-        {
-            _speed = speed;
-            _jumpForce = jumpForce;
-        }
-
-        public void PushingToClient(ClientStack target, CashTable cashTable)
+        public void Pushing(ClientStack target, CashTable source)
         {
             transform.DOJump(target.transform.position, _jumpForce, 1, _speed)
                      .OnComplete(() =>
                      {
                          target.HadBox();
-                         cashTable.DisableBox();
+                         source.DisableBox();
                      });
         }
     }

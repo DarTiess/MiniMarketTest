@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using DefaultNamespace.Cash;
-using Garden;
 using UnityEngine;
 using Vegetables;
 
@@ -34,7 +32,6 @@ namespace DefaultNamespace.Clients
         private CharacterAnimator _animator;
         private bool _onCash;
         private ClientMoneyStack _clientMoney;
-
         private List<VegetableInClient> _vegetableList = new List<VegetableInClient>();
 
         private void Start()
@@ -118,12 +115,23 @@ namespace DefaultNamespace.Clients
             _animator.HasStack();
         }
 
+        public void ClearProgress()
+        {
+            _full = false;
+            _stacking = false;
+            _onCash = false;
+           
+            HideBoxInHand();
+            ReplaceStackList();
+            OnRestart?.Invoke();
+        }
+
         private void CreateStackList()
         {
             for (int i = 0; i <  _vegetablesPlaces.Count; i++)
             {
                 VegetableInClient pref = Instantiate(_vegetablePrefab, _vegetablesPlaces[i].position, _vegetablesPlaces[i].rotation);
-                pref.InitVegetable(_jumpDuration, _jumpForce);
+                pref.Init(_jumpDuration, _jumpForce);
                 
                 pref.transform.parent = gameObject.transform;
                
@@ -161,19 +169,5 @@ namespace DefaultNamespace.Clients
             cashTable.StayOnQueue(this);
             _clientMove.StopMove();
         }
-
-        public void ClearProgress()
-        {
-            _full = false;
-            _stacking = false;
-            _onCash = false;
-           
-            HideBoxInHand();
-           ReplaceStackList();
-            OnRestart?.Invoke();
-        }
-
-        
-        
     }
 }

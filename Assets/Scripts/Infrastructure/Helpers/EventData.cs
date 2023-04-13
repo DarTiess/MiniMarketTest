@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
 
 public class EventData : MonoBehaviour, IDragHandler, IPointerDownHandler
 {
     public Vector2 DataDelta, DataNormal;      
     public PointerEventData Data = new PointerEventData(null);
     public float Speed = 0.2f;
-    
+    public static EventData McThis;
+
     private Vector2 _last = Vector2.zero;
-    public static EventData McThis; 
-    
+
     private void Awake()
     {
         McThis = this;

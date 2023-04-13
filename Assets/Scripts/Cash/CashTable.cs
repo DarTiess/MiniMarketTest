@@ -11,10 +11,12 @@ namespace DefaultNamespace.Cash
         [SerializeField] private BoxInCashTable _box;
         [SerializeField] private float _jumpBoxDuration;
         [SerializeField] private float _jumpBoxForce;
+       
         [Header("MoneySettings")]
         [SerializeField] private float _jumpMoneyDuration;
         [SerializeField] private float _jumpMoneyForce;
         [SerializeField] private List<MoneyInCashTable> _moneyList;
+      
         [Header("ClientsSettings")]
         [SerializeField] private List<Transform> _clientsPlaces;
         [SerializeField] private float _moveDuration;
@@ -41,7 +43,15 @@ namespace DefaultNamespace.Cash
                 _indexPlaces = 0;
             }
             _clientsList.Enqueue(clientStack);
-            clientStack.gameObject.transform.DOMove(_clientsPlaces[_indexPlaces].position, _moveDuration);
+            clientStack.gameObject.transform.DOMove(_clientsPlaces[_indexPlaces].position, _moveDuration)
+                       .OnComplete(() =>
+                       {
+                           var look = Quaternion.LookRotation(new Vector3(transform.position.x, clientStack.transform.position.y,transform.position.z) - 
+                          clientStack.transform.position);
+
+                           clientStack.transform.DOLocalRotateQuaternion(look, 0.5f);
+                          
+                       });
             _indexPlaces++;
         }
 
@@ -53,47 +63,43 @@ namespace DefaultNamespace.Cash
         public void StackIn(ClientStack client)
         {
            _box.gameObject.SetActive(true);
-           _box.PushingToClient(client, this);
+           _box.Pushing(client, this);
         }
 
         public void StackMoneyIn()
         {
             _moneyList[_indexMoney].gameObject.SetActive(true);
-            
             _indexMoney++;
-            Debug.Log(_indexMoney+" IndexMoney");
         }
 
         public void DisableBox()
         {
             _box.gameObject.SetActive(false);
-           
-        }
-
-        public void StackOutMoney()
-        {
-            _moneyList[_indexMoney-1].gameObject.SetActive(false);
-                                                                                   
-            _indexMoney--;
-            Debug.Log(_indexMoney+" IndexMoney");
         }
 
         public void PayMoney(PlayerMoneyStack playerMoneyStack)
         {
             _moneyList[_indexMoney-1].PushingToPlayer(playerMoneyStack, this);
-          
+            StackOutMoney();
         }
 
         private void OnStart()
         {
             _box.gameObject.SetActive(false);
-            _box.InitMoney(_jumpBoxDuration, _jumpBoxForce);
+            _box.Init(_jumpBoxDuration, _jumpBoxForce);
 
             foreach (MoneyInCashTable moneyInCashTable in _moneyList)
             {
-                moneyInCashTable.InitMoney(_jumpMoneyDuration, _jumpMoneyForce);
+                moneyInCashTable.Init(_jumpMoneyDuration, _jumpMoneyForce);
                 moneyInCashTable.gameObject.SetActive(false);
             }
+        }
+
+        private void StackOutMoney()
+        {
+            _moneyList[_indexMoney-1].gameObject.SetActive(false);
+                                                                                   
+            _indexMoney--;
         }
     }
 }

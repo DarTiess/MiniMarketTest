@@ -1,5 +1,3 @@
-using DefaultNamespace.Store;
-using DG.Tweening;
 using UnityEngine;
 
 namespace Vegetables
@@ -9,15 +7,11 @@ namespace Vegetables
         protected float _speed;
         protected float _jumpForce;
 
-        public virtual void InitVegetable(float speed, float jumpForce)
+        public virtual void Init(float speed, float jumpForce)
         {
             _speed = speed;
             _jumpForce = jumpForce;
         }
-
-        public virtual void Pushing(IStack target, IStack player)
-        {
-          
-        }
+        
     }
 }

@@ -6,12 +6,9 @@ namespace DefaultNamespace.Cash
     public class ClientMoneyStack: MonoBehaviour
     {
         [SerializeField] private MoneyInClient _moneyPrefab;
-        [SerializeField]
-        private int _moneyCount;
-        [SerializeField]
-        private float _jumDuration;
-        [SerializeField]
-        private float _jumpForce;
+        [SerializeField] private int _moneyCount;
+        [SerializeField] private float _jumDuration;
+        [SerializeField] private float _jumpForce;
 
         private int _indexMoney = 0;
         private List<MoneyInClient> _moneyList = new List<MoneyInClient>();
@@ -19,17 +16,6 @@ namespace DefaultNamespace.Cash
         private void Start()
         {
             CreateMoneyStack();
-        }
-
-        private void CreateMoneyStack()
-        {
-            for (int i = 0; i < _moneyCount; i++)
-            {
-                MoneyInClient money = Instantiate(_moneyPrefab, gameObject.transform);
-                money.gameObject.SetActive(false);
-                money.InitMoney(_jumDuration, _jumpForce);
-                _moneyList.Add(money);
-            }
         }
 
         public void PayMoney(CashTable target)
@@ -48,6 +34,17 @@ namespace DefaultNamespace.Cash
         {
             _moneyList[_indexMoney].gameObject.SetActive(false);
             _indexMoney++;
+        }
+
+        private void CreateMoneyStack()
+        {
+            for (int i = 0; i < _moneyCount; i++)
+            {
+                MoneyInClient money = Instantiate(_moneyPrefab, gameObject.transform);
+                money.gameObject.SetActive(false);
+                money.Init(_jumDuration, _jumpForce);
+                _moneyList.Add(money);
+            }
         }
     }
 }

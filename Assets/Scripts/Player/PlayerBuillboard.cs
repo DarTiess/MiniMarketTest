@@ -5,8 +5,7 @@ namespace Player
     [RequireComponent(typeof(PlayersStack))]
     public class PlayerBuillboard: MonoBehaviour
     {
-        [SerializeField]
-        private Canvas builboard;
+        [SerializeField] private Canvas builboard;
         private Camera _camera;
 
         private PlayersStack _playersStack;

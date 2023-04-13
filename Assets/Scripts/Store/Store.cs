@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using DefaultNamespace.Clients;
-using Garden;
 using UnityEngine;
 using Vegetables;
 
@@ -8,10 +7,8 @@ namespace DefaultNamespace.Store
 {
     public class Store: MonoBehaviour, IStack
     {
-        [SerializeField]
-        private float _jumpDuration;
-        [SerializeField]
-        private float _jumpForce;
+        [SerializeField] private float _jumpDuration;
+        [SerializeField] private float _jumpForce;
         [SerializeField] private List<VegetableInStore> _vegetables;
         public int _vegInStore=0;
         public bool IsFull => _vegInStore >= _vegetables.Count;
@@ -49,7 +46,7 @@ namespace DefaultNamespace.Store
         {
             foreach (VegetableInStore vegetable in _vegetables)
             {
-                vegetable.InitVegetable(_jumpDuration, _jumpForce);
+                vegetable.Init(_jumpDuration, _jumpForce);
                 vegetable.gameObject.SetActive(false);
                 
             }

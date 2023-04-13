@@ -1,42 +1,32 @@
-using UI;
+using DefaultNamespace.Clients;
 using UnityEngine;
 using Zenject;
 
 public class GameInstaller : MonoInstaller
 {
     [SerializeField] private LevelEventService _levelEventService;
-    [SerializeField] private CanvasControl _canvasController;
-    [SerializeField] private PlayerMovement _player;
-    [SerializeField] private PlayersStack _playerblockStack;
+   
     [SerializeField] private Economics _economics;
+    [SerializeField] private ClientsGenerator _clientsGenerator;
+        
 
-
+ 
     public override void InstallBindings()
     {
         BindLevelManager();
-        BindCanvasController();
-        BindPlayer();
-        BindBlockStack();
         BindEconimics();
+        BindClientsGenerator();
     }
 
     private void BindLevelManager()
     {
         Container.Bind<LevelEventService>().FromInstance(_levelEventService).AsSingle();
     }
-    private void BindCanvasController()
-    {
-        Container.Bind<CanvasControl>().FromInstance(_canvasController).AsSingle();
-    }
 
-    void BindPlayer()
-    {
-        Container.Bind<PlayerMovement>().FromInstance(_player).AsSingle();
-    }
 
-    private void BindBlockStack()
+    private void BindClientsGenerator()
     {
-       Container.Bind<PlayersStack>().FromInstance(_playerblockStack).AsSingle();
+        Container.Bind<ClientsGenerator>().FromInstance(_clientsGenerator).AsSingle();
     }
 
     private void BindEconimics()

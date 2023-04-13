@@ -91,6 +91,7 @@
       <workItem from="1681118441868" duration="20693000" />
       <workItem from="1681192401212" duration="30303000" />
       <workItem from="1681274486399" duration="35332000" />
+      <workItem from="1681364711797" duration="8555000" />
     </task>
     <servers />
   </component>
@@ -101,5 +102,24 @@
   <component name="UnityUnitTestConfiguration" currentTestLauncher="EditMode" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Scripts/Infrastructure/Helpers/GameInstaller.cs</url>
+          <line>16</line>
+          <properties documentPath="E:\Koding\DarProjUnity\MyPets\MiniMarketTest\Assets\Scripts\Infrastructure\Helpers\GameInstaller.cs" initialLine="14" containingFunctionPresentation="method 'InstallBindings'">
+            <startOffsets>
+              <option value="396" />
+            </startOffsets>
+            <endOffsets>
+              <option value="412" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

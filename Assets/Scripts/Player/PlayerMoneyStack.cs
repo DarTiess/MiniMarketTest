@@ -1,9 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using DefaultNamespace.BuyPlace;
 using DefaultNamespace.Cash;
-using ModestTree;
 using UnityEngine;
 using Zenject;
 
@@ -37,42 +34,21 @@ public class PlayerMoneyStack : MonoBehaviour
         if (other.CompareTag("Cash"))
         {
             CashTable cashTable = other.GetComponent<CashTable>();
-            if (cashTable.ClientCount > 0)
-            {
-                if (!_boxing)
-                {
-                    cashTable.CreateBox(this);
-                    _boxing = true;
-                }
-              
-            }
+            CheckClientsQueue(cashTable);
 
-            if (cashTable.MoneyCount > 0)
-            {
-                if (!_takeMoney)
-                {
-                    cashTable.PayMoney(this);
-                    _takeMoney = true;
-                }
-               
-              
-               
-            }
+            CheckCashMoney(cashTable);
         }
 
         if (other.CompareTag("BuyPlace"))
         {
-            if (!_onBuy)
+            if (_onBuy)
             {
-                BuyPlace buyPlace = other.GetComponent<BuyPlace>();
-                if (_economics.Money >= buyPlace.Price)
-                {
-                    _onBuy = true;
-                    _economics.BuyNewPlace(buyPlace.Price);
-                    OutStack(buyPlace);
-                }
+                return;
             }
-            
+
+            BuyPlace buyPlace = other.GetComponent<BuyPlace>();
+            CheckBank(buyPlace);
+
         }
     }
 
@@ -87,10 +63,7 @@ public class PlayerMoneyStack : MonoBehaviour
     public void StackOut(MoneyInPlayer money)
     {
        money.gameObject.SetActive(false);
-       
        _onBuy = false;
-       
-      
     }
 
     private void CreateStack()
@@ -99,7 +72,7 @@ public class PlayerMoneyStack : MonoBehaviour
         {
             MoneyInPlayer money = Instantiate(_moneyPrefab, transform);
             money.gameObject.SetActive(false);
-            money.InitMoney(_jumpDuration, _jumpForce);
+            money.Init(_jumpDuration, _jumpForce);
             _moneyList.Add(money);
         }
     }
@@ -117,5 +90,49 @@ public class PlayerMoneyStack : MonoBehaviour
                 }
             }
         
+    }
+
+    private void CheckClientsQueue(CashTable cashTable)
+    {
+        if (cashTable.ClientCount <= 0)
+        {
+            return;
+        }
+
+        if (_boxing)
+        {
+            return;
+        }
+
+        cashTable.CreateBox(this);
+        _boxing = true;
+    }
+
+    private void CheckCashMoney(CashTable cashTable)
+    {
+        if (cashTable.MoneyCount <= 0)
+        {
+            return;
+        }
+
+        if (_takeMoney)
+        {
+            return;
+        }
+
+        cashTable.PayMoney(this);
+        _takeMoney = true;
+    }
+
+    private void CheckBank(BuyPlace buyPlace)
+    {
+        if (_economics.Money < buyPlace.Price)
+        {
+            return;
+        }
+
+        _onBuy = true;
+        _economics.BuyNewPlace(buyPlace.Price);
+        OutStack(buyPlace);
     }
 }

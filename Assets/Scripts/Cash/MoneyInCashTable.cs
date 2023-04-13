@@ -1,32 +1,25 @@
-using System;
 using DG.Tweening;
 using UnityEngine;
+using Vegetables;
 
 namespace DefaultNamespace.Cash
 {
-    public class MoneyInCashTable : MonoBehaviour
+    public class MoneyInCashTable : VegetableBase
     {
-        private float _speed;
-        private float _jumpForce;
         private Vector3 _startPosition;
 
-        public void InitMoney(float speed, float jumpForce)
+        public override void Init(float speed, float jumpForce)
         {
-            _speed = speed;
-            _jumpForce = jumpForce;
+            base.Init(speed, jumpForce);
             _startPosition = transform.position;
         }
 
         public void PushingToPlayer(PlayerMoneyStack target, CashTable cashTable)
         {
             transform.DOJump(target.transform.position, _jumpForce, 1, _speed)
-                     .OnStart(() =>
-                     {
-                         target.StackIn();
-                     })
                      .OnComplete(() =>
-                     {
-                         cashTable.StackOutMoney();
+                     { 
+                         target.StackIn();
                         SetToStartPosition();
                      });
         }

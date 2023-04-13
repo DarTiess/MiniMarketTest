@@ -5,16 +5,13 @@ using UnityEngine;
 
 namespace Vegetables
 {
-    public class VegetableInStore : MonoBehaviour
+    public class VegetableInStore : VegetableBase
     {
-        private float _speed;
-        private float _jumpForce;
         private Vector3 _startPosition;
 
-        public void InitVegetable(float speed, float jumpForce)
+        public override void Init(float speed, float jumpForce)
         {
-            _speed = speed;
-            _jumpForce = jumpForce;
+            base.Init(speed, jumpForce);
             _startPosition = transform.position;
         }
 
